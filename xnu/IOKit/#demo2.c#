@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <CoreFoundation/CoreFoundation.h>
+
+void printKexts(CFDictionaryRef dict) {
+
+    CFDataRef xml = CFPropertyListCreateXMLData(kCFAllocatorDefault, (CFPropertyListRef)dict);
+
+    printf("%s", CFDataGetBytePtr(xml));
+
+    CFRelease(xml);
+}
+
+int main() {
+    CFDictionaryRef kextDict = OSKextCopyLoadedKextInfo(NULL, NULL);
+
+    printKexts(kextDict);
+
+}
+
+
