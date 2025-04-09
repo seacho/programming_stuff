@@ -1,39 +1,26 @@
-#include "AddConst.h"
-
-#include "llvm/Support/Casting.h"
+#include "MyPass.h"
+#include <llvm/IR/InstIterator.h>
+#include <llvm/IR/Operator.h>
+#include <llvm/ADT/SetVector.h>
 using namespace llvm;
 
 namespace MyPass{
 PreservedAnalyses DCEPass::run(Function &F, FunctionAnalysisManager &FAM)
 {
     bool Changed = false;
-    int cnt = 0;
-    // 迭代删除死代码直到收敛
-    do {
-      Changed = false;
-      for (BasicBlock& bb: F)
-      {
-           for (Instruction &I: bb)
-           {
-               // 跳过不可删除的指令：有副作用、Terminator指令、非空的
-               if (I.mayHaveSideEffects() || I.isTerminator() || !I.use_empty())
-                 continue;
 
-               // 删除指令
-               llvm::outs() << "delete 1 ins\n";
-               I.eraseFromParent();
-               Changed = true;
+    do{
+        SetVector<Value*> setValueRef;
+        for (Instruction &I : llvm::make_early_inc_range(instructions(F))){
+            if ((I.isSafeToRemove()) && (I.use_begin() == I.use_end())) {
+                outs() << "delete " << I << "\n";
+                I.eraseFromParent();
+            }
 
-           }
-
-      }
-      if (Changed)
-      {
-          outs() << "changed " << cnt << "times";
-          cnt++;
-      }
-    } while (Changed);
+        }
+    }while(Changed);
 
     return PreservedAnalyses::none();
 }
+
 }

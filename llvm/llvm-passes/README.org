@@ -1,0 +1,56 @@
+* LLVM Passes
+
+** Build
+First, let us define a set of path variables:
+
+#+BEGIN_SRC bash
+$> LLVM_INSTALL_DIR=</path/to/llvm/>
+$> LLVM_OPT=</path/to/opt>
+#+END_SRC
+
+For instance, if you built LLVM from source the commands above
+will be like:
+
+#+BEGIN_SRC bash
+$> LLVM_INSTALL_DIR=/path/to/llvm-project/build
+$> LLVM_OPT=$LLVM_INSTALL_DIR/bin/opt
+#+END_SRC
+
+Then, run CMake to prepare the build files. We will use the
+folder `build` for that. You can use any build tool that you
+want, e.g. ninja or make. In this example, we are using Ninja.
+
+#+BEGIN_SRC bash
+$> cmake -DLLVM_INSTALL_DIR=$LLVM_INSTALL_DIR -G "Ninja" -B build/ .
+#+END_SRC
+
+Next, move to the build folder and build the project:
+
+#+BEGIN_SRC bash
+$> cd build
+$> cmake --build .
+#+END_SRC
+
+## Run
+After building the project, the shared library will be at
+`build/lib`. There is an example of a code written in LLVM IR at
+`examples/foo.ll`. Let us first run the analysis printer on it:
+
+#+BEGIN_SRC bash
+$> $LLVM_OPT -load-pass-plugin build/lib/libAddConst.so \
+$>  -passes="print<add-const>" -disable-output examples/foo.ll
+#+END_SRC
+
+You can run the transformation pass using opt:
+
+#+BEGIN_SRC bash
+$> $LLVM_OPT -load-pass-plugin build/lib/libAddConst.so \
+$>  -passes="add-const" -S examples/foo.ll
+#+END_SRC
+
+Or using the llvm-based tool:
+
+#+BEGIN_SRC bash
+$> build/bin/addconst examples/foo.ll -o bar.ll
+$> cat bar.ll
+#+END_SRC

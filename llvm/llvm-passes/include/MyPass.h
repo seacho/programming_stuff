@@ -18,6 +18,18 @@ struct DCEPass: public llvm::PassInfoMixin<DCEPass>{
                                 llvm::FunctionAnalysisManager &FAM);
 };
 
+struct LocalOptPass: public llvm::PassInfoMixin<LocalOptPass>{
+
+    llvm::PreservedAnalyses run(llvm::Function &F,
+                                llvm::FunctionAnalysisManager &FAM);
+};
+struct AddWrapperPass: public llvm::PassInfoMixin<AddWrapperPass>{
+
+    llvm::PreservedAnalyses run(llvm::Function &F,
+                                llvm::FunctionAnalysisManager &FAM);
+    void insertBeforeBlock(llvm::BasicBlock &bb);
+};
+
 }
 
 #endif
