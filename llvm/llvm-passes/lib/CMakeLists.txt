@@ -2,9 +2,6 @@
 # See: https://llvm.org/docs/CMake.html#developing-llvm-passes-out-of-source
 #===============================================================================
 add_library(PassDemo SHARED
-    LocalOptPass.h
-    DCEPass.h
-
 
     PassManager.cpp
     DCEPass.cpp
