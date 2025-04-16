@@ -10,9 +10,11 @@ PreservedAnalyses DCEPass::run(Function &F, FunctionAnalysisManager &FAM)
     bool Changed = false;
 
     do{
+        Changed = false;
         SetVector<Value*> setValueRef;
         for (Instruction &I : llvm::make_early_inc_range(instructions(F))){
             if ((I.isSafeToRemove()) && (I.use_begin() == I.use_end())) {
+                Changed = true;
                 outs() << "delete " << I << "\n";
                 I.eraseFromParent();
             }
